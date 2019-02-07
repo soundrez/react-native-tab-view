@@ -24,6 +24,7 @@ type Props<T> = PagerCommonProps<T> &
     renderPager: (props: *) => React.Node,
     renderScene: (props: SceneRendererProps<T> & Scene<T>) => React.Node,
     renderTabBar: (props: SceneRendererProps<T>) => React.Node,
+    getAnimatedPosition: (props: SceneRendererProps<T>) => Animated,
     tabBarPosition: 'top' | 'bottom',
     useNativeDriver?: boolean,
     style?: ViewStyleProp,
@@ -51,6 +52,7 @@ export default class TabView<T: *> extends React.Component<Props<T>, State> {
     renderScene: PropTypes.func.isRequired,
     renderTabBar: PropTypes.func,
     tabBarPosition: PropTypes.oneOf(['top', 'bottom']),
+    getAnimatedPosition: PropTypes.func,
   };
 
   static defaultProps = {
@@ -65,6 +67,7 @@ export default class TabView<T: *> extends React.Component<Props<T>, State> {
       width: 0,
     },
     useNativeDriver: false,
+    getAnimatedPosition: () => {},
   };
 
   constructor(props: Props<T>) {
@@ -103,6 +106,9 @@ export default class TabView<T: *> extends React.Component<Props<T>, State> {
 
     // Delay rendering of unfocused scenes for improved startup
     setTimeout(() => this.setState({ renderUnfocusedScenes: true }), 0);
+
+    this.props.getAnimatedPosition(this.state.position)
+    
   }
 
   componentWillUnmount() {
